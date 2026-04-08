@@ -23,27 +23,6 @@ multi-agent pipeline.
 
 ---
 
-## Claude Code Instruction Files
-
-All Claude Code instructions live in `.claude/`:
-
-| File | Purpose |
-|---|---|
-| `PLATFORM.md` | Full platform vision, all phases, business context |
-| `ARCHITECTURE.md` | System architecture, models, services, URL contracts |
-| `CODING.md` | Django Way: DRY, fat models, skinny views, import rules |
-| `AGENTS.md` | Agent patterns, AgentFactory usage, mock rules |
-| `UI.md` | Dark theme, CSS classes, template hierarchy |
-| `WORKSPACE.md` | Filesystem rules, path safety |
-| `TESTING.md` | pytest rules, coverage requirements, mock strategy |
-| `REVIEW.md` | Pre-merge checklist, code review standards |
-| `SKILLS.md` | Reusable patterns library |
-| `CODE_REVIEW.md` | Claude Code: automated code review execution |
-| `TEST_GENERATION.md` | Claude Code: test script generation |
-| `TEST_EXECUTION.md` | Claude Code: test execution and analysis |
-
----
-
 ## Tech Stack
 
 - **Python** 3.11+ / **Django** 5.1
