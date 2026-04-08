@@ -1,0 +1,32 @@
+# Core
+Django==5.1
+psycopg2-binary>=2.9
+python-dotenv>=1.0
+
+# Auth
+django-allauth>=65.0
+requests>=2.33
+jwt>=1.4
+
+# API
+djangorestframework>=3.17
+
+# Files
+Pillow>=12.0
+
+# AI (needed by agent_factory for Phase 2+)
+anthropic>=0.90
+
+# Production
+gunicorn>=25.0
+whitenoise>=6.12
+
+# Dev tools
+pytest>=9.0
+pytest-django>=4.12
+pytest-cov>=7.0
+pytest-mock>=3.15
+factory-boy>=3.3
+ruff>=0.15
+mypy>=1.20
+django-stubs>=6.0

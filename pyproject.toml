@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "xtudio"
+version = "0.1.0"
+description = "AI-driven software project builder"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.ruff.lint.per-file-ignores]
+"management/*" = ["I001"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.development"
+
+# Phase 1 code — suppress mypy errors (do not modify Phase 1 logic)
+[[tool.mypy.overrides]]
+module = [
+    "apps.agent_factory.*",
+    "apps.audit_trail.*",
+    "apps.notification_hub.*",
+    "apps.memory_context.*",
+    "apps.pipeline_stages.*",
+    "apps.accounts.*",
+    "apps.workspace.*",
+    "apps.projects.*",
+    "apps.documents.*",
+    "apps.dashboard.*",
+    "config.settings.*",
+]
+ignore_errors = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--tb=short -v"
+
+[tool.coverage.run]
+source = ["apps"]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    # Infrastructure / library apps — tested via integration, not direct unit tests
+    "apps/agent_factory/*",
+    "apps/audit_trail/*",
+    "apps/notification_hub/*",
+    "apps/pipeline_stages/*",
+    "apps/memory_context/*",
+    "apps/workspace/*",
+    # Management commands (seed scripts, not testable as units)
+    "*/management/commands/seed_platform.py",
+]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true

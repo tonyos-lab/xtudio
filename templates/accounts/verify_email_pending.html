@@ -1,0 +1,18 @@
+{% extends "base/auth_base.html" %}
+{% block title %}Verify Your Email — xtudio{% endblock %}
+{% block auth_content %}
+<h1 class="auth-title">Check your email</h1>
+<p class="auth-subtitle">We've sent a verification link to your email address</p>
+
+<div style="text-align:center; padding: 1.5rem 0;">
+    <div style="font-size:3rem; margin-bottom:1rem;">✉️</div>
+    <p style="color:var(--text-2); margin-bottom:1.5rem;">
+        Click the link in the email to verify your account and get started.
+    </p>
+    <p style="color:var(--text-3); font-size:0.85rem;">
+        Didn't receive it? Check your spam folder or
+        <a href="{% url 'accounts-login' %}">sign in again</a> to resend.
+    </p>
+</div>
+<p class="auth-switch"><a href="{% url 'accounts-login' %}">← Back to sign in</a></p>
+{% endblock %}

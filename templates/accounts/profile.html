@@ -1,0 +1,47 @@
+{% extends "base/app_base.html" %}
+{% block title %}Profile — Xtudio{% endblock %}
+{% block breadcrumb %}
+<a href="/dashboard/" class="bc-item">Dashboard</a>
+<span class="bc-sep">&#8250;</span>
+<span class="bc-item active">Profile</span>
+{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <h1 class="page-title">Profile</h1>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Account Details</h2>
+    </div>
+    <div class="card-body">
+        <div class="stat-row">
+            <span class="stat-label">Username</span>
+            <span class="stat-value">{{ request.user.username }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Email</span>
+            <span class="stat-value">{{ request.user.email|default:"—" }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Name</span>
+            <span class="stat-value">{{ request.user.get_full_name|default:"—" }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Joined</span>
+            <span class="stat-value">{{ request.user.date_joined|date:"N j, Y" }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Role</span>
+            <span class="stat-value">
+                {% if request.user.is_superuser %}
+                    <span class="badge badge-warning">Superuser</span>
+                {% elif request.user.is_staff %}
+                    <span class="badge badge-info">Admin</span>
+                {% else %}
+                    <span class="badge badge-cat">User</span>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+{% endblock %}

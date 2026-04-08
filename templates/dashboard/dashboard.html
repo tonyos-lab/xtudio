@@ -1,0 +1,91 @@
+{% extends "base/app_base.html" %}
+{% block title %}Dashboard — xtudio{% endblock %}
+{% block breadcrumb %}
+<span class="bc-item active">Dashboard</span>
+{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Welcome back, {{ request.user.username }}</p>
+    </div>
+    <div>
+        <a href="{% url 'project-create' %}" class="btn btn-primary">+ New Project</a>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">&#9670;</div>
+        <div class="stat-body">
+            <div class="stat-value">{{ total_projects }}</div>
+            <div class="stat-label">Total Projects</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">&#9654;</div>
+        <div class="stat-body">
+            <div class="stat-value">{{ active_projects }}</div>
+            <div class="stat-label">Active Projects</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">&#128196;</div>
+        <div class="stat-body">
+            <div class="stat-value">{{ total_documents }}</div>
+            <div class="stat-label">Total Documents</div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Projects -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Recent Projects</h3>
+        <a href="{% url 'project-list' %}" class="btn btn-ghost btn-sm">View all →</a>
+    </div>
+    {% if recent_projects %}
+    <div class="table-wrap" style="border:none; border-radius:0;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in recent_projects %}
+                <tr>
+                    <td style="color:var(--text);">{{ project.name }}</td>
+                    <td>
+                        <span class="badge badge-{{ project.status }}">
+                            {{ project.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ project.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'project-detail' project_id=project.id %}"
+                           class="btn btn-ghost btn-sm">Open →</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <div class="empty-state">
+            <div class="empty-icon">&#9670;</div>
+            <div class="empty-title">No projects yet</div>
+            <div class="empty-sub">Create your first project to get started.</div>
+            <a href="{% url 'project-create' %}" class="btn btn-primary" style="margin-top:1rem;">
+                + New Project
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

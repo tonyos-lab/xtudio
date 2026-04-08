@@ -1,0 +1,47 @@
+{% load static %}
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'dashboard' %}" class="sidebar-brand">
+            <span class="brand-text">xtudio</span>
+        </a>
+    </div>
+    <div class="sidebar-nav">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                   href="{% url 'dashboard' %}">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if 'project' in request.resolver_match.url_name|default:'' %}active{% endif %}"
+                   href="{% url 'project-list' %}">
+                    <i class="bi bi-folder2-open me-2"></i>Projects
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar-footer">
+        <div class="sidebar-user d-flex align-items-center gap-2">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="sidebar-avatar rounded-circle">
+            {% else %}
+                <div class="sidebar-avatar-placeholder">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </div>
+            {% endif %}
+            <div>
+                <div class="sidebar-username fw-semibold">{{ user.username }}</div>
+                <div class="sidebar-user-links small">
+                    <a href="{% url 'profile' %}" class="sidebar-user-link">Profile</a>
+                    <span class="text-muted mx-1">·</span>
+                    <a href="#" class="sidebar-user-link"
+                       onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form id="sidebar-logout-form" method="post" action="{% url 'logout' %}" class="d-none">
+        {% csrf_token %}
+    </form>
+</nav>

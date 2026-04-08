@@ -1,0 +1,12 @@
+<div class="empty-state text-center py-5">
+    <div class="empty-state-icon mb-3">
+        <i class="bi bi-{{ empty_icon|default:'folder2' }} display-4 text-muted"></i>
+    </div>
+    <h5 class="empty-state-title text-muted">{{ empty_title|default:"Nothing here yet" }}</h5>
+    {% if empty_message %}
+        <p class="text-muted small">{{ empty_message }}</p>
+    {% endif %}
+    {% if empty_action_url and empty_action_label %}
+        <a href="{{ empty_action_url }}" class="btn btn-primary mt-2">{{ empty_action_label }}</a>
+    {% endif %}
+</div>

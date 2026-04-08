@@ -1,0 +1,224 @@
+{% extends "base/app_base.html" %}
+{% block title %}{% if project %}Edit Project{% else %}New Project{% endif %} — xtudio{% endblock %}
+{% block nav_projects %}active{% endblock %}
+{% block breadcrumb %}
+<a href="{% url 'dashboard-home' %}" class="bc-item">Dashboard</a>
+<span class="bc-sep">›</span>
+<a href="{% url 'project-list' %}" class="bc-item">Projects</a>
+<span class="bc-sep">›</span>
+<span class="bc-item active">{% if project %}Edit{% else %}New Project{% endif %}</span>
+{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{% if project %}Edit Project{% else %}New Project{% endif %}</h1>
+        <p class="page-subtitle">
+            {% if project %}Update project details{% else %}Set up your new project{% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="card" style="max-width:600px;">
+    <div class="card-header">
+        <h3 class="card-title">Project Details</h3>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label" for="id_name">
+                    Project Name <span class="required-star">*</span>
+                </label>
+                <input type="text" id="id_name" name="name" class="form-input"
+                       value="{{ form.name.value|default:'' }}"
+                       placeholder="My Awesome App" autofocus required>
+                {% if form.name.errors %}
+                <div class="form-error">
+                    {% for error in form.name.errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label" for="id_description">Description</label>
+                <textarea id="id_description" name="description" class="form-input form-textarea"
+                          placeholder="What are you building?">{{ form.description.value|default:'' }}</textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:1.5rem;">
+                <label class="form-label" for="id_tech_stack">Tech Stack</label>
+                <input type="text" id="id_tech_stack" name="tech_stack" class="form-input"
+                       value="{{ form.tech_stack.value|default:'' }}"
+                       placeholder="e.g. Django + PostgreSQL + React">
+                <span class="form-hint">Optional — helps agents understand your project</span>
+            </div>
+            <div style="display:flex; gap:0.75rem;">
+                <button type="submit" class="btn btn-primary">
+                    {% if project %}Save changes{% else %}Create project{% endif %}
+                </button>
+                <a href="{% if project %}{% url 'project-detail' project_id=project.id %}{% else %}{% url 'project-list' %}{% endif %}"
+                   class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if project %}
+
+<!-- Requirements Upload -->
+<div class="card" style="margin-bottom:1.5rem; margin-top:1.5rem;">
+    <div class="card-header">
+        <h3 class="card-title">Requirements Documents</h3>
+    </div>
+    <div class="card-body">
+        <form id="upload-form"
+              method="post"
+              enctype="multipart/form-data"
+              action="{% url 'requirements-upload' project_id=project.id %}">
+            {% csrf_token %}
+            <div class="upload-area" id="upload-area">
+                <div style="font-size:1.5rem; margin-bottom:0.5rem; opacity:0.5;">&#128196;</div>
+                <p style="color:var(--text-2); font-size:0.875rem;">
+                    Drag & drop files here
+                </p>
+                <p style="color:var(--text-3); font-size:0.75rem; margin-top:0.25rem;">
+                    PDF, DOCX, DOC, TXT, MD — max 10MB each
+                </p>
+            </div>
+            <input type="file"
+                   id="file-input"
+                   name="files"
+                   multiple
+                   accept=".pdf,.docx,.doc,.txt,.md"
+                   style="position:absolute; opacity:0; width:0; height:0; overflow:hidden;">
+            <div id="file-list" style="margin-top:0.75rem;"></div>
+            <div id="upload-error" class="form-error" style="display:none;"></div>
+            <button type="button" class="btn btn-primary" style="margin-top:1rem;"
+                    onclick="document.getElementById('file-input').click();">
+                Upload Documents
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Documents Table -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Project Documents</h3>
+        <span style="color:var(--text-3); font-size:0.8rem;">
+            {{ documents|length }} document{{ documents|length|pluralize }}
+        </span>
+    </div>
+    {% if documents %}
+    <div class="table-wrap" style="border:none; border-radius:0;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Type</th>
+                    <th>Source</th>
+                    <th>Size</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in documents %}
+                <tr>
+                    <td style="color:var(--text); font-family:var(--mono); font-size:0.8rem;">
+                        {{ doc.filename }}
+                    </td>
+                    <td>
+                        <span style="font-size:0.75rem; color:var(--text-3); text-transform:uppercase;">
+                            {{ doc.file_type }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if doc.source == 'upload' %}
+                        <span class="badge badge-info">Uploaded</span>
+                        {% elif doc.source == 'agent' %}
+                        <span class="badge badge-success">Agent</span>
+                        {% else %}
+                        <span class="badge badge-pending">System</span>
+                        {% endif %}
+                    </td>
+                    <td style="color:var(--text-3); font-size:0.8rem;">
+                        {{ doc.file_size|filesizeformat }}
+                    </td>
+                    <td style="color:var(--text-3); font-size:0.8rem;">
+                        {{ doc.created_at|date:"M d, Y" }}
+                    </td>
+                    <td>
+                        <a href="{% url 'document-view' doc_id=doc.id %}"
+                           class="btn btn-ghost btn-sm"
+                           target="_blank"
+                           rel="noopener">View</a>
+                        <a href="{% url 'document-download' doc_id=doc.id %}"
+                           class="btn btn-ghost btn-sm">Download</a>
+                        <button type="button"
+                                class="btn btn-ghost btn-sm"
+                                onclick="showRemoveModal('{{ doc.filename|escapejs }}', '{% url 'document-delete' doc_id=doc.id %}')">
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <div class="empty-state">
+            <div class="empty-icon">&#128196;</div>
+            <div class="empty-title">No documents yet</div>
+            <div class="empty-sub">Upload your requirements documents above to get started.</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Remove confirmation modal -->
+<div id="msg-modal" class="msg-modal-overlay" role="dialog" aria-modal="true"
+     style="display:none;" aria-label="Confirm removal">
+    <div class="msg-modal-box">
+        <div class="msg-modal-list">
+            <div class="msg-modal-item msg-warning" id="confirm-modal-text"></div>
+        </div>
+        <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+            <button class="btn btn-ghost btn-sm" onclick="closeMsgModal()">Cancel</button>
+            <form id="confirm-delete-form" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline btn-sm"
+                        style="color:var(--danger);">Remove</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if project %}
+{% load static %}
+<script src="{% static 'js/upload.js' %}"></script>
+<script>
+(function () {
+    var input = document.getElementById('file-input');
+    var form  = document.getElementById('upload-form');
+    if (input && form) {
+        input.addEventListener('change', function () {
+            if (input.files.length > 0) { form.submit(); }
+        });
+    }
+}());
+
+function showRemoveModal(filename, actionUrl) {
+    document.getElementById('confirm-modal-text').textContent =
+        'Remove "' + filename + '"? This cannot be undone.';
+    document.getElementById('confirm-delete-form').action = actionUrl;
+    var modal = document.getElementById('msg-modal');
+    modal.style.opacity = '1';
+    modal.style.display = 'flex';
+}
+</script>
+{% endif %}
+{% endblock %}
