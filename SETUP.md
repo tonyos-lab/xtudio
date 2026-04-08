@@ -171,19 +171,12 @@ Open your browser at: **http://localhost:8000**
 
 ---
 
-## Optional — Google OAuth
+## Optional — Google Sign-In
 
-To enable "Sign in with Google", add these to your `.env`:
+To enable "Continue with Google" on the login and register pages, follow the step-by-step guide:
+**[GOOGLE_SIGNIN.md](GOOGLE_SIGNIN.md)**
 
-```bash
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-```
-
-Get credentials from the [Google Cloud Console](https://console.cloud.google.com/).
-Set the authorised redirect URI to: `http://localhost:8000/accounts/google/login/callback/`
-
-Google OAuth is completely optional — email/password registration always works.
+Google Sign-In is completely optional — email/password registration always works without it.
 
 ---
 
